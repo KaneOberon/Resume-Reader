@@ -15,7 +15,7 @@ def review_resume():
     resume_text = data.get("resume", "")
 
     if not resume_text:
-        return jsonify({"feedback": "Please provide your resume text."}), 400
+        return jsonify({"review": "Please provide your resume text."}), 400
 
     try:
         prompt = (
@@ -31,10 +31,10 @@ def review_resume():
             temperature=0.7,
         )
         feedback = response.choices[0].text.strip()
-        return jsonify({"feedback": feedback})
+        return jsonify({"review": feedback})
 
     except Exception as e:
-        return jsonify({"feedback": f"Error: {str(e)}"}), 500
+        return jsonify({"review": f"Error: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
