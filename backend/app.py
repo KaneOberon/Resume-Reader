@@ -4,8 +4,6 @@ import openai
 from flask_cors import CORS
 
 app = Flask(__name__)
-
-# Allow CORS only from your frontend domain (replace with your GitHub Pages URL)
 CORS(app, origins=["https://kaneoberon.github.io"])
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -19,18 +17,16 @@ def review_resume():
         return jsonify({"review": "Please provide your resume text."}), 400
 
     try:
-        prompt = (
-            "You are an expert career coach. "
-            "Please review the following resume and give concise, constructive feedback:\n\n"
-            f"{resume_text}\n\nFeedback:"
-        )
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=prompt,
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are an expert career coach."},
+                {"role": "user", "content": f"Please review the following resume and give concise, constructive feedback:\n\n{resume_text}"}
+            ],
             max_tokens=300,
             temperature=0.7,
         )
-        feedback = response.choices[0].text.strip()
+        feedback = response.choices[0].message.content.strip()
         return jsonify({"review": feedback})
 
     except Exception as e:
@@ -38,4 +34,3 @@ def review_resume():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
