@@ -4,9 +4,10 @@ import openai
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Allow requests from your frontend domain
 
-# Set your OpenAI API key as environment variable OPENAI_API_KEY
+# Allow CORS only from your frontend domain (replace with your GitHub Pages URL)
+CORS(app, origins=["https://kaneoberon.github.io"])
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/review", methods=["POST"])
@@ -23,7 +24,6 @@ def review_resume():
             "Please review the following resume and give concise, constructive feedback:\n\n"
             f"{resume_text}\n\nFeedback:"
         )
-
         response = openai.Completion.create(
             engine="text-davinci-003",
             prompt=prompt,
@@ -38,3 +38,4 @@ def review_resume():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
