@@ -7,48 +7,80 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: auto;
-      padding: 20px;
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
     }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
     textarea {
       width: 100%;
       height: 200px;
-      margin-bottom: 10px;
-    }
-    button {
-      padding: 10px 20px;
-    }
-    #response {
-      margin-top: 20px;
-      padding: 10px;
+      padding: 1rem;
+      font-size: 1rem;
+      margin-top: 1rem;
       border: 1px solid #ccc;
-      background-color: #f9f9f9;
+      border-radius: 6px;
+    }
+
+    button {
+      display: block;
+      margin: 1rem auto;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #reviewOutput {
+      margin-top: 2rem;
+      background-color: #ffffff;
+      padding: 1rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
   <h1>AI Resume Reviewer</h1>
-  <p>Paste your resume below. Click the button to get feedback.</p>
+
   <textarea id="resumeInput" placeholder="Paste your resume here..."></textarea>
-  <br/>
-  <button onclick="submitResume()">Analyze Resume</button>
-  <div id="response"></div>
+  <button onclick="submitResume()">Submit</button>
+
+  <div id="reviewOutput"></div>
 
   <script>
     async function submitResume() {
-      const resumeText = document.getElementById('resumeInput').value;
-      const responseDiv = document.getElementById('response');
-      responseDiv.innerText = 'Analyzing...';
+      const userResumeText = document.getElementById("resumeInput").value;
+      const output = document.getElementById("reviewOutput");
+      output.textContent = "Reviewing your resume... Please wait.";
 
-      const res = await fetch('https://your-backend-url.onrender.com/review', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ resume: resumeText }),
-      });
+      try {
+        const response = await fetch("https://resume-reader-m4b7.onrender.com/review", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ resume: userResumeText })
+        });
 
-      const data = await res.json();
-      responseDiv.innerText = data.feedback || 'Error fetching feedback.';
+        const data = await response.json();
+        output.textContent = data.review || "No review returned.";
+      } catch (error) {
+        output.textContent = "An error occurred while processing your resume.";
+        console.error(error);
+      }
     }
   </script>
 </body>
